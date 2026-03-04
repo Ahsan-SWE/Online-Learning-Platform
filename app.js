@@ -2,6 +2,7 @@
 
 /** --- Shared UI Rendering --- **/
 function renderSharedUI() {
+
     const navHtml = `
     <nav class="bg-white dark:bg-darkcard shadow-sm fixed w-full z-50 top-0 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -9,7 +10,7 @@ function renderSharedUI() {
                 <div class="flex items-center">
                     <a href="index.html" class="flex-shrink-0 flex items-center gap-2">
                         <i class="fas fa-graduation-cap text-primary text-3xl"></i>
-                        <span class="font-bold text-xl tracking-tight">EduPlatform</span>
+                        <span class="font-bold text-xl tracking-tight">Learn With Ahsan</span>
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
@@ -25,10 +26,63 @@ function renderSharedUI() {
         </div>
     </nav>`;
 
+
+const footerHtml = `
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-graduation-cap text-primary"></i> Learn With Ahsan</h3>
+                <p class="text-gray-400 text-sm">Learn With Ahsan Is More Than Fun.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-gray-400 text-sm">
+                    <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                    <li><a href="dashboard.html" class="hover:text-white transition">Dashboard</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-4">Connect</h4>
+                <div class="flex space-x-4">
+                    <a href="https://github.com/Ahsan-SWE" class="text-gray-400 hover:text-white text-xl transition"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-gray-500 text-sm border-t border-gray-800 pt-4">
+            &copy; 2026 Learn With Ahsan. All rights reserved.
+        </div>
+    </footer>`;
+
+
+
+
+
     const navContainer = document.getElementById('navbar-container');
     if(navContainer) navContainer.innerHTML = navHtml;
+
+
+const footerContainer = document.getElementById('footer-container');
+    if(footerContainer) footerContainer.innerHTML = footerHtml;
+
+const toggleTheme = () => {
+        document.documentElement.classList.toggle('dark');
+        if(document.documentElement.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    };
+    
+    const themeBtn = document.getElementById('theme-toggle');
+    if(themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
 }
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     renderSharedUI();
 });
+
+
