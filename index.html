@@ -4,8 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn with Ahsan</title>
+
+<script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: '#4F46E5', darkbg: '#111827', darkcard: '#1F2937' } } }
+        }
+    </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to new Learning Platform Project</h1>
+    <body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100 transition-colors duration-300 flex flex-col min-h-screen">
+    
+    <div id="navbar-container"></div>
+    <main id="home-page" class="flex-grow pt-16">
+        <h1 class="text-center mt-10 text-3xl">EduPlatform is loading...</h1>
+    </main>
+    <div id="footer-container"></div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  <script src="app.js"></script>
+
 </body>
 </html>
