@@ -108,11 +108,16 @@ const toggleTheme = () => {
 
 
 
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     renderSharedUI();
+    if(document.getElementById('home-page')) initHome();
+    if(document.getElementById('course-page')) initCourse(); // Updated
 });
-
 
 // app.js (render dynamic featured courses grid on home page)
 
@@ -149,3 +154,45 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSharedUI();
     if(document.getElementById('home-page')) initHome();
 });
+
+
+
+
+
+// app.js (dynamically render course details and curriculum)
+
+function initCourse() {
+    const courseId = parseInt(getQueryParam('course'));
+    const course = coursesData.find(c => c.id === courseId);
+    const content = document.getElementById('course-content');
+
+    if(!course) {
+        content.innerHTML = `<div class="text-center py-20"><h2 class="text-3xl font-bold">Course Not Found</h2><a href="index.html" class="text-primary mt-4 inline-block">Return Home</a></div>`;
+        return;
+    }
+    
+    content.innerHTML = `
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+            <div class="md:w-1/2">
+                <img src="${course.thumbnail}" class="w-full h-full object-cover min-h-[300px]">
+            </div>
+            <div class="md:w-1/2 p-8 flex flex-col justify-center">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">${course.title}</h1>
+                <p class="text-gray-600 dark:text-gray-300 mb-6 text-lg">${course.description}</p>
+                <a href="player.html?course=${course.id}&lesson=1" class="text-center bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-600 transition">Start Course</a>
+            </div>
+        </div>
+        <div class="mt-12 bg-white dark:bg-darkcard rounded-2xl shadow p-8">
+            <h2 class="text-2xl font-bold mb-6 border-b dark:border-gray-700 pb-4">Course Curriculum</h2>
+            <div class="space-y-3">
+                ${course.lessons.map((lesson, idx) => `
+                    <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                        <div class="flex items-center"><div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center mr-4">${idx + 1}</div>
+                        <h4 class="font-semibold dark:text-white">${lesson.title}</h4></div>
+                        <div class="text-sm text-gray-500"><i class="far fa-play-circle mr-2"></i> ${lesson.duration}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
