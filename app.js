@@ -5,9 +5,9 @@
 // app.js (Data base)
 
 const coursesData = [
-    { id: 1, title: "Modern HTML & CSS Mastery", instructor: "Sarah Jenkins", rating: 4.8, duration: "4h 30m", price: "Free", thumbnail: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Learn to build responsive, modern websites.", youtubeVideoId: "pQN-pnXPaVg", lessons: generateLessons(1, "HTML/CSS Basics", 10) },
-    { id: 2, title: "JavaScript for Beginners", instructor: "John Doe", rating: 4.9, duration: "6h 15m", price: "$19.99", thumbnail: "https://images.unsplash.com/photo-1627398240411-8e41bf0cb5ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Master the fundamentals of JavaScript.", youtubeVideoId: "W6NZfCO5SIk", lessons: generateLessons(2, "JS Fundamentals", 8) },
-    { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
+    { id: 1, title: "Modern HTML & CSS Mastery", instructor: "Sarah Jenkins", rating: 4.8, duration: "4h 30m", price: "Free", thumbnail: "image/html-css.jpg",  description: "Learn to build responsive, modern websites.", youtubeVideoId: "pQN-pnXPaVg", lessons: generateLessons(1, "HTML/CSS Basics", 10) },
+    { id: 2, title: "JavaScript for Beginners", instructor: "John Doe", rating: 4.9, duration: "6h 15m", price: "$19.99", thumbnail: "image/js-beginners.jpg", description: "Master the fundamentals of JavaScript.", youtubeVideoId: "W6NZfCO5SIk", lessons: generateLessons(2, "JS Fundamentals", 8) },
+    { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "image/ui-ux-design.jpg", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
 ];
 
 function generateLessons(courseId, topic, count) {
@@ -113,3 +113,38 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// app.js (render dynamic featured courses grid on home page)
+
+function createCourseCardHTML(course) {
+    return `
+    <div class="bg-white dark:bg-darkcard rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2 flex flex-col group">
+        <div class="relative overflow-hidden">
+            <img src="${course.thumbnail}" alt="${course.title}" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute top-2 right-2 bg-white dark:bg-gray-800 px-2 py-1 text-xs font-bold rounded shadow">${course.price}</div>
+        </div>
+        <div class="p-5 flex-grow flex flex-col">
+            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <i class="fas fa-star text-yellow-400 mr-1"></i> ${course.rating} 
+                <span class="mx-2">•</span> <i class="far fa-clock mr-1"></i> ${course.duration}
+            </div>
+            <h3 class="font-bold text-lg mb-1 dark:text-white">${course.title}</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">By ${course.instructor}</p>
+            <div class="mt-auto">
+                <a href="course.html?course=${course.id}" class="block w-full text-center bg-indigo-50 dark:bg-gray-700 text-primary dark:text-indigo-300 py-2 rounded-lg font-semibold hover:bg-primary hover:text-white transition">View Details</a>
+            </div>
+        </div>
+    </div>`;
+}
+
+function initHome() {
+    const grid = document.getElementById('courses-grid');
+    if(grid) {
+        grid.innerHTML = coursesData.map(c => createCourseCardHTML(c)).join('');
+    }
+}
+
+// Update the DOMContentLoaded listener to call initHome
+document.addEventListener('DOMContentLoaded', () => {
+    renderSharedUI();
+    if(document.getElementById('home-page')) initHome();
+});
