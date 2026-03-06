@@ -5,9 +5,9 @@
 // app.js (Data base)
 
 const coursesData = [
-    { id: 1, title: "Modern HTML & CSS Mastery", instructor: "Sarah Jenkins", rating: 4.8, duration: "4h 30m", price: "Free", thumbnail: "image/html-css.jpg",  description: "Learn to build responsive, modern websites.", youtubeVideoId: "pQN-pnXPaVg", lessons: generateLessons(1, "HTML/CSS Basics", 10) },
-    { id: 2, title: "JavaScript for Beginners", instructor: "John Doe", rating: 4.9, duration: "6h 15m", price: "$19.99", thumbnail: "image/js-beginners.jpg", description: "Master the fundamentals of JavaScript.", youtubeVideoId: "W6NZfCO5SIk", lessons: generateLessons(2, "JS Fundamentals", 8) },
-    { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "image/ui-ux-design.jpg", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
+    { id: 1, title: "Modern HTML & CSS Mastery", instructor: "Sarah Jenkins", rating: 4.8, duration: "4h 30m", price: "Free", thumbnail: "images/html-css.jpg",  description: "Learn to build responsive, modern websites.", youtubeVideoId: "pQN-pnXPaVg", lessons: generateLessons(1, "HTML/CSS Basics", 10) },
+    { id: 2, title: "JavaScript for Beginners", instructor: "John Doe", rating: 4.9, duration: "6h 15m", price: "$19.99", thumbnail: "images/js-beginners.jpg", description: "Master the fundamentals of JavaScript.", youtubeVideoId: "W6NZfCO5SIk", lessons: generateLessons(2, "JS Fundamentals", 8) },
+    { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "images/ui-ux-design.jpg", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
 ];
 
 function generateLessons(courseId, topic, count) {
