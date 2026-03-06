@@ -1,5 +1,32 @@
 // app.js
 
+
+
+// app.js (Data base)
+
+const coursesData = [
+    { id: 1, title: "Modern HTML & CSS Mastery", instructor: "Sarah Jenkins", rating: 4.8, duration: "4h 30m", price: "Free", thumbnail: "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Learn to build responsive, modern websites.", youtubeVideoId: "pQN-pnXPaVg", lessons: generateLessons(1, "HTML/CSS Basics", 10) },
+    { id: 2, title: "JavaScript for Beginners", instructor: "John Doe", rating: 4.9, duration: "6h 15m", price: "$19.99", thumbnail: "https://images.unsplash.com/photo-1627398240411-8e41bf0cb5ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Master the fundamentals of JavaScript.", youtubeVideoId: "W6NZfCO5SIk", lessons: generateLessons(2, "JS Fundamentals", 8) },
+    { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
+];
+
+function generateLessons(courseId, topic, count) {
+    let lessons = [];
+    for(let i=1; i<=count; i++) {
+        lessons.push({ id: `c${courseId}_l${i}`, num: i, title: `${topic} - Part ${i}`, duration: `${Math.floor(Math.random() * 10 + 5)}:00` });
+    }
+    return lessons;
+}
+
+
+
+
+
+
+
+
+
+
 /** --- Shared UI Rendering --- **/
 function renderSharedUI() {
 
