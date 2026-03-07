@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player - EduPlatform</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: '#4F46E5', darkbg: '#111827', darkcard: '#1F2937' } } } }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-darkbg dark:text-gray-100 transition-colors duration-300 flex flex-col h-screen overflow-hidden">
+    <div id="navbar-container"></div>
+    <main id="player-page" class="flex-grow pt-16 flex flex-col lg:flex-row overflow-hidden fade-in">
+        <div class="flex-grow flex flex-col w-full lg:w-3/4 bg-black">
+            <div class="relative w-full pb-[56.25%] flex-grow">
+                <iframe id="video-iframe" class="absolute top-0 left-0 w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="p-6 bg-white dark:bg-darkcard flex-shrink-0 flex justify-between items-center shadow-inner">
+                <div><h2 id="current-lesson-title" class="text-2xl font-bold">Loading...</h2><p id="course-title-player" class="text-gray-500">Course Title</p></div>
+                <div id="player-controls" class="flex space-x-3"></div>
+            </div>
+        </div>
+        <div class="w-full lg:w-1/4 bg-gray-100 dark:bg-gray-800 flex flex-col h-[40vh] lg:h-auto border-l dark:border-gray-700">
+            <div class="p-4 bg-white dark:bg-darkcard border-b dark:border-gray-700 shadow-sm z-10"><h3 class="font-bold text-lg mb-2">Course Curriculum</h3></div>
+            <div id="lesson-list-container" class="flex-grow overflow-y-auto scrollbar-hide p-2 space-y-2"></div>
+        </div>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
