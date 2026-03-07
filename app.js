@@ -150,11 +150,14 @@ function initHome() {
 }
 
 // Update the DOMContentLoaded listener to call initHome
+//(Update DOMContentLoaded listener)
+
 document.addEventListener('DOMContentLoaded', () => {
     renderSharedUI();
     if(document.getElementById('home-page')) initHome();
+    if(document.getElementById('course-page')) initCourse();
+    if(document.getElementById('player-page')) initPlayer(); // Updated
 });
-
 
 
 
