@@ -199,3 +199,45 @@ function initCourse() {
         </div>
     `;
 }
+
+
+
+
+// (more function for player page)
+
+function initPlayer() {
+    const courseId = parseInt(getQueryParam('course'));
+    const lessonNum = parseInt(getQueryParam('lesson')) || 1;
+    const course = coursesData.find(c => c.id === courseId);
+
+    if(!course) {
+        document.getElementById('player-page').innerHTML = `<div class="p-10 text-center w-full mt-20"><h1 class="text-2xl font-bold">Course not found.</h1></div>`; return;
+    }
+
+    const currentLesson = course.lessons.find(l => l.num === lessonNum) || course.lessons[0];
+    
+    document.getElementById('video-iframe').src = `https://www.youtube.com/embed/${course.youtubeVideoId}?rel=0`;
+    document.getElementById('current-lesson-title').innerText = `${currentLesson.num}. ${currentLesson.title}`;
+    document.getElementById('course-title-player').innerText = course.title;
+
+    const listContainer = document.getElementById('lesson-list-container');
+    listContainer.innerHTML = course.lessons.map(l => {
+        const isCurrent = l.num === currentLesson.num;
+        return `<a href="player.html?course=${course.id}&lesson=${l.num}" class="flex items-center justify-between p-3 rounded-lg border ${isCurrent ? 'bg-indigo-50 border-primary dark:bg-gray-700' : 'bg-white dark:bg-darkcard'} transition cursor-pointer">
+            <span class="text-sm font-medium ${isCurrent ? 'text-primary dark:text-white' : ''}"><i class="fas fa-play-circle mr-2"></i>${l.num}. ${l.title}</span>
+        </a>`;
+    }).join('');
+
+    const controls = document.getElementById('player-controls');
+    if(lessonNum < course.lessons.length) {
+        controls.innerHTML = `<button onclick="window.location.href='player.html?course=${course.id}&lesson=${lessonNum + 1}'" class="px-4 py-2 bg-primary text-white rounded">Next Lesson</button>`;
+    } else {
+        controls.innerHTML = `<button onclick="window.location.href='dashboard.html'" class="px-4 py-2 bg-green-500 text-white rounded">Finish Course</button>`;
+    }
+}
+
+
+
+
+
+
