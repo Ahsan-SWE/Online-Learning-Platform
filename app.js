@@ -11,6 +11,24 @@ const coursesData = [
     { id: 3, title: "UI/UX Design Principles", instructor: "Mike Ross", rating: 4.7, duration: "3h 45m", price: "$29.99", thumbnail: "https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", description: "Learn how to design beautiful interfaces.", youtubeVideoId: "c9Wg6Cb_YlU", lessons: generateLessons(3, "Design Thinking", 5) }
 ];
 
+// app.js (Add just below coursesData array)
+
+const store = {
+    getEnrolled: () => JSON.parse(localStorage.getItem('enrolledCourses') || '[]'),
+    enroll: (id) => {
+        let enrolled = store.getEnrolled();
+        if(!enrolled.includes(id)) { enrolled.push(id); localStorage.setItem('enrolledCourses', JSON.stringify(enrolled)); }
+    },
+    getCompleted: () => JSON.parse(localStorage.getItem('completedLessons') || '[]'),
+    markCompleted: (lessonId) => {
+        let comp = store.getCompleted();
+        if(!comp.includes(lessonId)) { comp.push(lessonId); localStorage.setItem('completedLessons', JSON.stringify(comp)); }
+    },
+    getLastWatched: () => JSON.parse(localStorage.getItem('lastWatched') || 'null'),
+    setLastWatched: (courseId, lessonId) => localStorage.setItem('lastWatched', JSON.stringify({ courseId, lessonId }))
+};
+
+
 function generateLessons(courseId, topic, count) {
     let lessons = [];
     for(let i=1; i<=count; i++) {
@@ -164,79 +182,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // app.js (dynamically render course details and curriculum)
 
+
+// app.js (Replace existing initCourse function)
+
 function initCourse() {
     const courseId = parseInt(getQueryParam('course'));
     const course = coursesData.find(c => c.id === courseId);
     const content = document.getElementById('course-content');
+    if(!course) return;
 
-    if(!course) {
-        content.innerHTML = `<div class="text-center py-20"><h2 class="text-3xl font-bold">Course Not Found</h2><a href="index.html" class="text-primary mt-4 inline-block">Return Home</a></div>`;
-        return;
-    }
+    const isEnrolled = store.getEnrolled().includes(course.id);
+    const completed = store.getCompleted();
     
     content.innerHTML = `
-        <div class="bg-white dark:bg-darkcard rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-            <div class="md:w-1/2">
-                <img src="${course.thumbnail}" class="w-full h-full object-cover min-h-[300px]">
-            </div>
+        <div class="bg-white dark:bg-darkcard rounded-2xl shadow flex flex-col md:flex-row">
+            <div class="md:w-1/2"><img src="${course.thumbnail}" class="w-full h-full object-cover min-h-[300px]"></div>
             <div class="md:w-1/2 p-8 flex flex-col justify-center">
-                <h1 class="text-3xl md:text-4xl font-bold mb-4">${course.title}</h1>
-                <p class="text-gray-600 dark:text-gray-300 mb-6 text-lg">${course.description}</p>
-                <a href="player.html?course=${course.id}&lesson=1" class="text-center bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-600 transition">Start Course</a>
+                <h1 class="text-3xl font-bold mb-4">${course.title}</h1>
+                <div class="flex gap-4 mt-auto">
+                    <a href="player.html?course=${course.id}&lesson=1" class="flex-1 text-center bg-primary text-white px-6 py-3 rounded-xl font-bold">${isEnrolled ? 'Continue' : 'Start Course'}</a>
+                    ${!isEnrolled ? `<button id="enroll-btn" class="flex-1 bg-gray-200 text-gray-800 px-6 py-3 rounded-xl font-bold">Add to Dashboard</button>` : `<div class="flex-1 bg-green-100 text-green-700 px-6 py-3 rounded-xl font-bold text-center">Enrolled</div>`}
+                </div>
             </div>
         </div>
-        <div class="mt-12 bg-white dark:bg-darkcard rounded-2xl shadow p-8">
-            <h2 class="text-2xl font-bold mb-6 border-b dark:border-gray-700 pb-4">Course Curriculum</h2>
+        <div class="mt-12 bg-white dark:bg-darkcard shadow p-8">
+            <h2 class="text-2xl font-bold mb-6">Curriculum</h2>
             <div class="space-y-3">
-                ${course.lessons.map((lesson, idx) => `
-                    <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                        <div class="flex items-center"><div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-500 flex items-center justify-center mr-4">${idx + 1}</div>
-                        <h4 class="font-semibold dark:text-white">${lesson.title}</h4></div>
-                        <div class="text-sm text-gray-500"><i class="far fa-play-circle mr-2"></i> ${lesson.duration}</div>
+                ${course.lessons.map(lesson => `
+                    <div class="flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <span>${completed.includes(lesson.id) ? '✅' : '▶️'} ${lesson.title}</span>
                     </div>
                 `).join('')}
             </div>
         </div>
     `;
-}
 
+    const enrollBtn = document.getElementById('enroll-btn');
+    if(enrollBtn) {
+        enrollBtn.addEventListener('click', () => { store.enroll(course.id); window.location.reload(); });
+    }
+}
 
 
 
 // (more function for player page)
 
+
+// app.js (Replace existing initPlayer function entirely with this one)
+
 function initPlayer() {
     const courseId = parseInt(getQueryParam('course'));
     const lessonNum = parseInt(getQueryParam('lesson')) || 1;
     const course = coursesData.find(c => c.id === courseId);
-
-    if(!course) {
-        document.getElementById('player-page').innerHTML = `<div class="p-10 text-center w-full mt-20"><h1 class="text-2xl font-bold">Course not found.</h1></div>`; return;
-    }
+    if(!course) return;
 
     const currentLesson = course.lessons.find(l => l.num === lessonNum) || course.lessons[0];
+    
+    // Auto Enroll & Track
+    store.enroll(course.id);
+    store.setLastWatched(course.id, currentLesson.num);
+    const completed = store.getCompleted();
     
     document.getElementById('video-iframe').src = `https://www.youtube.com/embed/${course.youtubeVideoId}?rel=0`;
     document.getElementById('current-lesson-title').innerText = `${currentLesson.num}. ${currentLesson.title}`;
     document.getElementById('course-title-player').innerText = course.title;
 
-    const listContainer = document.getElementById('lesson-list-container');
-    listContainer.innerHTML = course.lessons.map(l => {
-        const isCurrent = l.num === currentLesson.num;
-        return `<a href="player.html?course=${course.id}&lesson=${l.num}" class="flex items-center justify-between p-3 rounded-lg border ${isCurrent ? 'bg-indigo-50 border-primary dark:bg-gray-700' : 'bg-white dark:bg-darkcard'} transition cursor-pointer">
-            <span class="text-sm font-medium ${isCurrent ? 'text-primary dark:text-white' : ''}"><i class="fas fa-play-circle mr-2"></i>${l.num}. ${l.title}</span>
-        </a>`;
-    }).join('');
+    document.getElementById('lesson-list-container').innerHTML = course.lessons.map(l => `
+        <a href="player.html?course=${course.id}&lesson=${l.num}" class="block p-3 border rounded ${l.num === currentLesson.num ? 'bg-indigo-50 dark:bg-gray-700' : 'bg-white dark:bg-darkcard'}">${completed.includes(l.id) ? '✅' : ''} ${l.title}</a>
+    `).join('');
 
     const controls = document.getElementById('player-controls');
-    if(lessonNum < course.lessons.length) {
-        controls.innerHTML = `<button onclick="window.location.href='player.html?course=${course.id}&lesson=${lessonNum + 1}'" class="px-4 py-2 bg-primary text-white rounded">Next Lesson</button>`;
-    } else {
-        controls.innerHTML = `<button onclick="window.location.href='dashboard.html'" class="px-4 py-2 bg-green-500 text-white rounded">Finish Course</button>`;
+    let buttonsHtml = '';
+    if(!completed.includes(currentLesson.id)) {
+        buttonsHtml += `<button id="btn-complete" class="px-4 py-2 bg-green-500 text-white rounded mr-2">Mark Completed</button>`;
     }
+    if(lessonNum < course.lessons.length) {
+        buttonsHtml += `<button onclick="window.location.href='player.html?course=${course.id}&lesson=${lessonNum + 1}'" class="px-4 py-2 bg-primary text-white rounded">Next</button>`;
+    } else {
+        buttonsHtml += `<button onclick="window.location.href='dashboard.html'" class="px-4 py-2 bg-primary text-white rounded">Finish</button>`;
+    }
+    controls.innerHTML = buttonsHtml;
+
+    const btnComplete = document.getElementById('btn-complete');
+    if(btnComplete) btnComplete.addEventListener('click', () => { store.markCompleted(currentLesson.id); window.location.reload(); });
 }
-
-
 
 
 
