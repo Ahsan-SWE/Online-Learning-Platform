@@ -131,12 +131,61 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+// app.js (Update DOMContentLoaded listener)
+
 document.addEventListener('DOMContentLoaded', () => {
     renderSharedUI();
     if(document.getElementById('home-page')) initHome();
-    if(document.getElementById('course-page')) initCourse(); // Updated
+    if(document.getElementById('course-page')) initCourse();
+    if(document.getElementById('player-page')) initPlayer();
+    if(document.getElementById('dashboard-page')) initDashboard(); // Updated
 });
 
+// app.js (Add at the very bottom)
+
+function initDashboard() {
+    const enrolledIds = store.getEnrolled();
+    const completed = store.getCompleted();
+    const lastWatched = store.getLastWatched();
+
+    document.getElementById('stat-enrolled').innerText = enrolledIds.length;
+    document.getElementById('stat-completed').innerText = completed.length;
+
+    if(lastWatched) {
+        const lastCourse = coursesData.find(c => c.id === lastWatched.courseId);
+        if(lastCourse) document.getElementById('stat-last').innerText = lastCourse.title;
+    }
+
+    const dashboardGrid = document.getElementById('dashboard-courses');
+    if(enrolledIds.length === 0) {
+        dashboardGrid.innerHTML = `<p class="col-span-full text-gray-500">No courses enrolled yet.</p>`; return;
+    }
+
+    let html = '';
+    enrolledIds.forEach(id => {
+        const course = coursesData.find(c => c.id === id);
+        if(!course) return;
+
+        const compCount = course.lessons.filter(l => completed.includes(l.id)).length;
+        const total = course.lessons.length;
+        const pct = Math.round((compCount / total) * 100);
+
+        let nextLessonNum = 1;
+        for(let l of course.lessons) { if(!completed.includes(l.id)) { nextLessonNum = l.num; break; } }
+        if(compCount === total) nextLessonNum = total;
+
+        html += `
+        <div class="bg-white dark:bg-darkcard rounded-xl shadow p-5 flex flex-col">
+            <h3 class="font-bold text-lg mb-4">${course.title}</h3>
+            <div class="mb-4">
+                <span class="text-xs text-gray-500">Progress ${pct}%</span>
+                <div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-primary h-2 rounded-full" style="width: ${pct}%"></div></div>
+            </div>
+            <a href="player.html?course=${course.id}&lesson=${nextLessonNum}" class="text-center bg-indigo-50 dark:bg-gray-700 text-primary px-4 py-2 rounded">Continue</a>
+        </div>`;
+    });
+    dashboardGrid.innerHTML = html;
+}
 // app.js (render dynamic featured courses grid on home page)
 
 function createCourseCardHTML(course) {
@@ -265,6 +314,8 @@ function initPlayer() {
 
     const btnComplete = document.getElementById('btn-complete');
     if(btnComplete) btnComplete.addEventListener('click', () => { store.markCompleted(currentLesson.id); window.location.reload(); });
+
+
 }
 
 
